@@ -6,25 +6,33 @@ import getpass
 import os.path
 import xml.etree.cElementTree as ET
 import pandas as pd
+import sys
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-browser = webdriver.Chrome()
-browser.get('https://myanimelist.net/login.php')
-
 TIMEOUT = 60
+
+command = str(sys.argv[1])
+user_genre = str(sys.argv[2])
+
+if command.upper() == 'E':
+    browser = webdriver.Chrome()
+    browser.get('https://myanimelist.net/login.php')
+else:
+    path = str(sys.argv[3])
 
 
 def main():
     global df_xml
-    command = export_or_upload()
+    # command = export_or_upload()
     if command.upper() == 'E':
         login()
         navigate_to_list()
-        python_selector = browser.find_element_by_xpath("/html/body/div[3]/a[6]")
+        python_selector = WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, "/html/body/div[3]/a[6]")))
         python_selector.send_keys(Keys.RETURN)
         export_button = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/form/input")))
@@ -35,7 +43,7 @@ def main():
         export_link = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/div/a")))
         export_link.click()
-        files = glob.glob("C:/Users/AlexN/Downloads/*")
+        files = glob.glob("C:/Users/AlexN/Downloads/animelist*")
 
         seconds = 0
         download_wait = True
@@ -43,23 +51,24 @@ def main():
         while download_wait and seconds < TIMEOUT:
             time.sleep(1)
             download_wait = False
+
             latest_filepath = max(files, key=os.path.getctime)
             print(latest_filepath)
             _, filename = os.path.split(latest_filepath)
-            if filename.endswith('.tmp'):
+            if not filename.endswith('.gz'):
                 download_wait = True
             seconds += 1
 
             if not download_wait:
                 latest_filepath = max(files, key=os.path.getctime)
                 df_xml = unzip_mal(latest_filepath)
+
+        browser.quit()
     else:
-        path = input("Enter file path of list to use: ")
+        # path = input("Enter file path of list to use: ")
         df_xml = unzip_mal(path)
 
-    browser.quit()
-
-    user_genre = input("Enter genre to search for: ")
+    # user_genre = input("Enter genre to search for: ")
     plan_to_watch_shows = []
     for index, row in df_xml.iterrows():
         if row['my_status'] == "Plan to Watch":
@@ -71,11 +80,13 @@ def main():
             continue
         genres_list = anime['my_tags'].split(", ")
         for genre in genres_list:
-            if genre == user_genre:
+            if genre.lower() == user_genre.lower():
                 final_anime_list.append(anime['series_title'])
 
     for anime in final_anime_list:
-        print(anime)
+        with open("C:/Users/AlexN/Desktop/AnimeList.txt", "w") as anime_list_file:
+            anime_list_file.write(anime)
+            print(anime)
 
 
 def login():
@@ -143,11 +154,17 @@ def unzip_mal(filepath):
             my_rewatching_ep = node.find('my_rewatching_ep')
             update_on_import = node.find('update_on_import')
 
-            df_xml = df_xml.append(pd.Series([get_value_of_node(series_animedb_id), get_value_of_node(series_title), get_value_of_node(series_type), get_value_of_node(series_episodes),
-                                              get_value_of_node(my_id), get_value_of_node(my_watched_episodes), get_value_of_node(my_start_date), get_value_of_node(my_finish_date),
-                                              get_value_of_node(my_rated), get_value_of_node(my_score), get_value_of_node(my_dvd), get_value_of_node(my_storage), get_value_of_node(my_status),
-                                              get_value_of_node(my_comments), get_value_of_node(my_times_watched), get_value_of_node(my_rewatch_value), get_value_of_node(my_tags),
-                                              get_value_of_node(my_rewatching), get_value_of_node(my_rewatching_ep), get_value_of_node(update_on_import)], index=df_cols), ignore_index=True)
+            df_xml = df_xml.append(pd.Series(
+                [get_value_of_node(series_animedb_id), get_value_of_node(series_title), get_value_of_node(series_type),
+                 get_value_of_node(series_episodes),
+                 get_value_of_node(my_id), get_value_of_node(my_watched_episodes), get_value_of_node(my_start_date),
+                 get_value_of_node(my_finish_date),
+                 get_value_of_node(my_rated), get_value_of_node(my_score), get_value_of_node(my_dvd),
+                 get_value_of_node(my_storage), get_value_of_node(my_status),
+                 get_value_of_node(my_comments), get_value_of_node(my_times_watched),
+                 get_value_of_node(my_rewatch_value), get_value_of_node(my_tags),
+                 get_value_of_node(my_rewatching), get_value_of_node(my_rewatching_ep),
+                 get_value_of_node(update_on_import)], index=df_cols), ignore_index=True)
 
         return df_xml
 
