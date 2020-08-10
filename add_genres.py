@@ -83,7 +83,7 @@ def open_mal():
 
 def get_link_with_index(index, link_xpath):
     table = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='list-container']/div[4]/div/table")))
-    table_bodies = table.find_elements_by_xpath(".//tbody[@class='list-item']")
+    table_bodies = WebDriverWait(browser, 10).until(EC.presence_of_all_elements_located((By.XPATH, ".//tbody[@class='list-item']")))
     tr = table_bodies[index].find_element_by_xpath(".//tr")
     link = tr.find_element_by_xpath(link_xpath)
     return link
