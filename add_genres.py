@@ -78,6 +78,7 @@ def open_mal():
                 textarea.send_keys(genre, ", ")
 
     browser.quit()
+    print("All genres updated in MAL for user: https://myanimelist.net/animelist/" + username)
 
 
 def get_link_with_index(index, link_xpath):

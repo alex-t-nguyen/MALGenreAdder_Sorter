@@ -89,7 +89,11 @@ def main():
         with open("C:/Users/AlexN/Desktop/AnimeList.txt", "w") as anime_list_file:
             anime_list_file.write(anime)
 
-    os.startfile("C:/Users/AlexN/Desktop/AnimeList.txt")
+    # If no animes in list -> file not created, so can't open file -> return message
+    if len(final_anime_list) == 0:
+        print("No \"Plan to watch\" animes available with genre: " + user_genre)
+    else:
+        os.startfile("C:/Users/AlexN/Desktop/AnimeList.txt")
 
 
 def login():
@@ -158,7 +162,7 @@ def unzip_mal(filepath):
             my_rewatching_ep = node.find('my_rewatching_ep')
             update_on_import = node.find('update_on_import')
 
-            df_xml_converted = df_xml.append(pd.Series(
+            df_xml_converted = df_xml_converted.append(pd.Series(
                 [get_value_of_node(series_animedb_id), get_value_of_node(series_title), get_value_of_node(series_type),
                  get_value_of_node(series_episodes),
                  get_value_of_node(my_id), get_value_of_node(my_watched_episodes), get_value_of_node(my_start_date),
