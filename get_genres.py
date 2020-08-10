@@ -1,13 +1,13 @@
-import glob
+
 import gzip
 import time
-from selenium import webdriver
 import getpass
 import os.path
 import xml.etree.cElementTree as ET
 import pandas as pd
 import sys
 
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -15,11 +15,16 @@ from selenium.webdriver.support import expected_conditions as EC
 
 TIMEOUT = 60
 
+""" Options to disable warning message when working with chrome """
+options = webdriver.ChromeOptions()
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--ignore-ssl-errors')
+
 command = str(sys.argv[1])
 user_genre = str(sys.argv[2])
 
 if command.upper() == 'E':
-    browser = webdriver.Chrome()
+    browser = webdriver.Chrome(options=options)
     browser.get('https://myanimelist.net/login.php')
 else:
     path = str(sys.argv[3])
@@ -27,7 +32,7 @@ else:
 
 def main():
     global df_xml
-    # command = export_or_upload()
+
     if command.upper() == 'E':
         login()
         navigate_to_list()
@@ -43,32 +48,28 @@ def main():
         export_link = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/div/a")))
         export_link.click()
-        files = glob.glob("C:/Users/AlexN/Downloads/animelist*")
+        export_text = export_link.text
 
+        list_filepath = "C:/Users/AlexN/Downloads/{0}".format(export_text)
+
+        print("MAL list file: " + list_filepath)
         seconds = 0
-        download_wait = True
 
-        while download_wait and seconds < TIMEOUT:
+        # Wait for file to complete downloading
+        while not os.path.exists(list_filepath):
             time.sleep(1)
-            download_wait = False
-
-            latest_filepath = max(files, key=os.path.getctime)
-            print(latest_filepath)
-            _, filename = os.path.split(latest_filepath)
-            if not filename.endswith('.gz'):
-                download_wait = True
             seconds += 1
-
-            if not download_wait:
-                latest_filepath = max(files, key=os.path.getctime)
-                df_xml = unzip_mal(latest_filepath)
+            if seconds > TIMEOUT:
+                break
+        # Unzip .gz file and convert data to pandas dataframe
+        df_xml = unzip_mal(list_filepath)
 
         browser.quit()
     else:
-        # path = input("Enter file path of list to use: ")
+        # path = input("Enter file path of list to use: ") -> added as batch file command line argument
         df_xml = unzip_mal(path)
 
-    # user_genre = input("Enter genre to search for: ")
+    # user_genre = input("Enter genre to search for: ") -> added as batch file command line argument
     plan_to_watch_shows = []
     for index, row in df_xml.iterrows():
         if row['my_status'] == "Plan to Watch":
@@ -83,10 +84,12 @@ def main():
             if genre.lower() == user_genre.lower():
                 final_anime_list.append(anime['series_title'])
 
+    # Write all anime titles to .txt file with specified genre
     for anime in final_anime_list:
         with open("C:/Users/AlexN/Desktop/AnimeList.txt", "w") as anime_list_file:
             anime_list_file.write(anime)
-            print(anime)
+
+    os.startfile("C:/Users/AlexN/Desktop/AnimeList.txt")
 
 
 def login():
@@ -109,7 +112,8 @@ def export_or_upload():
 
 def navigate_to_list():
     python_selector = WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='header-menu']/div[2]/a/i")))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='header-menu']/div[2]/a/i")),
+        message="Unable to login. Check your login credentials again...")
     python_selector.click()
     python_selector = browser.find_element_by_xpath("//*[@id='header-menu']/div[2]/div/ul/li[1]/a")
     python_selector.click()
@@ -129,7 +133,7 @@ def unzip_mal(filepath):
                    "my_storage", "my_status",
                    "my_comments", "my_times_watched", "my_rewatch_value", "my_tags", "my_rewatching",
                    "my_rewatching_ep", "update_on_import"]
-        df_xml = pd.DataFrame(columns=df_cols)
+        df_xml_converted = pd.DataFrame(columns=df_cols)
 
         # Create pandas dataframe object (table)
         for node in parsed_xml.getroot():
@@ -154,7 +158,7 @@ def unzip_mal(filepath):
             my_rewatching_ep = node.find('my_rewatching_ep')
             update_on_import = node.find('update_on_import')
 
-            df_xml = df_xml.append(pd.Series(
+            df_xml_converted = df_xml.append(pd.Series(
                 [get_value_of_node(series_animedb_id), get_value_of_node(series_title), get_value_of_node(series_type),
                  get_value_of_node(series_episodes),
                  get_value_of_node(my_id), get_value_of_node(my_watched_episodes), get_value_of_node(my_start_date),
@@ -166,7 +170,7 @@ def unzip_mal(filepath):
                  get_value_of_node(my_rewatching), get_value_of_node(my_rewatching_ep),
                  get_value_of_node(update_on_import)], index=df_cols), ignore_index=True)
 
-        return df_xml
+        return df_xml_converted
 
 
 def get_value_of_node(node):

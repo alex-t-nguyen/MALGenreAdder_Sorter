@@ -11,7 +11,12 @@ SCROLL_PAUSE_TIME = 0.5
 ANIME_LINK_PATH = ".//td[@class='data title clearfix']//a"
 ANIME_TAG_PATH = ".//td[@class='data tags']"
 
-browser = webdriver.Chrome()
+""" Options to disable warning message when working with chrome """
+options = webdriver.ChromeOptions()
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--ignore-ssl-errors')
+
+browser = webdriver.Chrome(options=options)
 browser.get('https://myanimelist.net/login.php')
 
 
@@ -29,8 +34,6 @@ def open_mal():
 
     # Navigate to list
     navigate_to_list()
-
-    # browser.get("https://myanimelist.net/animelist/alex_nguyen00")
 
     scroll_to_bottom()
 
@@ -64,7 +67,6 @@ def open_mal():
                 genres_list.append(genres[j].get_attribute('textContent'))
 
             # Navigate back to list of anime
-            # browser.back()
             navigate_to_list()
 
             # Click on tag link
@@ -74,6 +76,8 @@ def open_mal():
                 EC.presence_of_element_located((By.XPATH, ".//textarea")))
             for genre in genres_list:
                 textarea.send_keys(genre, ", ")
+
+    browser.quit()
 
 
 def get_link_with_index(index, link_xpath):

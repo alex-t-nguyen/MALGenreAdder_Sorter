@@ -1,23 +1,25 @@
 @echo off
 
-set /p command="Would you like to add or get genres? [A/G]: "
+:start
+    set /p command="Would you like to add or get genres? [A/G]: "
 
-if "%command%" == "G" goto :getGenre
-if "%command%" == "g" goto :getGenre
+    if /I "%command%" == "G" goto :getGenre
 
-if "%command%" == "A" goto :addGenre
-if "%command%" == "a" goto :addGenre
+    if /I "%command%" == "A" goto :addGenre
+
+    goto :start
 
 :getGenre
     set /p command2="Do you want to export a list from MAL or upload a current list? [E/U]: "
 
-    if "%command2%" == "U" goto :uploadFile
-    if "%command2%" == "u" goto :uploadFile
+    if /I "%command2%" == "U" goto :uploadFile
+
+    if /I not "%command2%" == "E" goto :getGenre
 
     set /p genre="Enter genre of anime to search for: "
 
     cd C:\Users\AlexN\Documents\Python Projects\MALGenreAdder
-    python get_genres.py %command2% %genre%
+    python get_genres.py "%command2%" "%genre%"
 
     goto :eof
 
@@ -32,6 +34,6 @@ if "%command%" == "a" goto :addGenre
     set /p pathname="Enter file path of list to use: "
     set /p genre="Enter genre of anime to search for: "
 
-    python get_genres.py %command% %genre% %pathname%
+    python get_genres.py "%command%" "%genre%" "%pathname%"
 
     goto :eof
