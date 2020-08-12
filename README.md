@@ -5,3 +5,10 @@ MAL (MyAnimeList) is the world's most active online anime and manga community an
 The program makes use of the "Tag" section (right hand side of list) of each anime in a user's list by automatically labeling the tags of each anime with their respective genres. By doing so, the program is then able to sort through all of the shows in the user's "Plan to watch" list and retrieve specific animes by genre.
 
 ![MAL list showing tags](images/MAL_tags.PNG)
+
+The program utilizes python, which will need to be installed in order to run.
+The program can be run by navigating to the project directory in the command prompt and typing in the batch file command "get_anime". Afterwards, a series of prompts will be given to navigate the user in adding genres to one's list or exporting/uploading a list from MAL to search for animes of a specific genre.
+
+![Command prompt command to add genres](images/Instructions_to_add.PNG)
+![Command prompt command to get genres](images/Instructions_to_get.PNG)
+
