@@ -39,12 +39,20 @@ def open_mal():
 
     table = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='list-container']/div[4]/div/table")))
     table_bodies = table.find_elements_by_xpath(".//tbody[@class='list-item']")
+    already_edited_table_bodies  = table.find_elements_by_xpath(".//tbody[@class='list-item']/tr[1]/td[@class='data tags']/div/span[1]")
+
     num_bodies = len(table_bodies)
+    already_edited_num_bodies = len(already_edited_table_bodies)
+    
+    print("Starting number: " + str(already_edited_num_bodies))
+    if already_edited_num_bodies > 290:
+        scroll_to_bottom()
 
-    for i in range(0, num_bodies, 1):
+    initial_check = True
+    for i in range(already_edited_num_bodies - 1, num_bodies, 1):
 
-        # If at bottom of page -> scroll to load more data if not at end of list
-        if i % 300 == 0:
+        # If near bottom of page (item #300) -> scroll to load more data if not at end of list
+        if i % 290 == 0:
             scroll_to_bottom()
 
         # Check for @span tag in td[@class='data tags'] -> genres already inputted
@@ -68,7 +76,11 @@ def open_mal():
 
             # Navigate back to list of anime
             navigate_to_list()
-
+            # Need to scroll to bottom every time we navigate back to list because page refreshes
+            # and the max number of items loaded in list initially is 300
+            if i > 290:
+                scroll_to_bottom()
+                time.sleep(1)
             # Click on tag link
             td_link = get_link_with_index(i, ANIME_TAG_PATH)
             td_link.find_element_by_xpath(".//a[@class='edit']").send_keys(Keys.RETURN)
@@ -83,7 +95,8 @@ def open_mal():
 
 def get_link_with_index(index, link_xpath):
     table = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='list-container']/div[4]/div/table")))
-    table_bodies = WebDriverWait(browser, 10).until(EC.presence_of_all_elements_located((By.XPATH, ".//tbody[@class='list-item']")))
+    table_bodies = WebDriverWait(table, 10).until(EC.presence_of_all_elements_located((By.XPATH, ".//tbody[@class='list-item']")))
+    print("Number of table_bodies: " + str(len(table_bodies)) + "at index: " + str(index))
     tr = table_bodies[index].find_element_by_xpath(".//tr")
     link = tr.find_element_by_xpath(link_xpath)
     return link
