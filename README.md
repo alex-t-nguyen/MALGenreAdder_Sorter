@@ -4,4 +4,4 @@ MAL (MyAnimeList) is the world's most active online anime and manga community an
 ## Usage
 The program makes use of the "Tag" section (right hand side of list) of each anime in a user's list by automatically labeling the tags of each anime with their respective genres. By doing so, the program is then able to sort through all of the shows in the user's "Plan to watch" list and retrieve specific animes by genre.
 
-![MAL list showing tags]
+![MAL list showing tags](images/MAL_tags.PNG)
