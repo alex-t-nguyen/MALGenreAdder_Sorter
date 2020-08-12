@@ -15,16 +15,11 @@ from selenium.webdriver.support import expected_conditions as EC
 
 TIMEOUT = 60
 
-""" Options to disable warning message when working with chrome """
-options = webdriver.ChromeOptions()
-options.add_argument('--ignore-certificate-errors')
-options.add_argument('--ignore-ssl-errors')
-
 command = str(sys.argv[1])
 user_genre = str(sys.argv[2])
 
 if command.upper() == 'E':
-    browser = webdriver.Chrome(options=options)
+    browser = webdriver.Chrome()
     browser.get('https://myanimelist.net/login.php')
 else:
     path = str(sys.argv[3])
