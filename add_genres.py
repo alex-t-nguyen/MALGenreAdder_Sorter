@@ -44,7 +44,6 @@ def open_mal():
     num_bodies = len(table_bodies)
     already_edited_num_bodies = len(already_edited_table_bodies)
     
-    print("Starting number: " + str(already_edited_num_bodies))
     if already_edited_num_bodies > 290:
         scroll_to_bottom()
 
@@ -96,7 +95,7 @@ def open_mal():
 def get_link_with_index(index, link_xpath):
     table = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='list-container']/div[4]/div/table")))
     table_bodies = WebDriverWait(table, 10).until(EC.presence_of_all_elements_located((By.XPATH, ".//tbody[@class='list-item']")))
-    print("Number of table_bodies: " + str(len(table_bodies)) + "at index: " + str(index))
+    
     tr = table_bodies[index].find_element_by_xpath(".//tr")
     link = tr.find_element_by_xpath(link_xpath)
     return link
