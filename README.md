@@ -7,7 +7,9 @@ The program makes use of the "Tag" section (right hand side of list) of each ani
 ![MAL list showing tags](images/MAL_tags.PNG)
 
 The program utilizes python, which will need to be installed in order to run.
-The program can be run by navigating to the project directory in the command prompt and typing in the batch file command "get_anime". Afterwards, a series of prompts will be given to navigate the user in adding genres to one's list or exporting/uploading a list from MAL to search for animes of a specific genre.
+The program can be run by navigating to the project directory in the command prompt and typing in the batch file command "get_anime". <br />
+``` get_anime # Run in command prompt ``` <br />
+Afterwards, a series of prompts will be given to navigate the user in adding genres to one's list or exporting/uploading a list from MAL to search for animes of a specific genre.
 
 ![Command prompt command to add genres](images/Instructions_to_add.PNG)
 ![Command prompt command to get genres](images/Instructions_to_get.PNG)
