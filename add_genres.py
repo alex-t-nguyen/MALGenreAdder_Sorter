@@ -76,7 +76,9 @@ def open_mal():
             EC.presence_of_element_located((By.XPATH, ".//textarea")))
         for genre in genres_list:
             textarea.send_keys(genre, ", ")
-
+    # Click back on "All Anime" link to exit textbox and save edit to final anime in list
+    all_anime_link = browser.find_element_by_xpath("//*[@id='status-menu']/div/a[1]")
+    all_anime_link.send_keys(Keys.RETURN)
     browser.quit()
     print("All genres updated in MAL for user: https://myanimelist.net/animelist/" + username)
 
