@@ -31,17 +31,14 @@ def main():
     if command.upper() == 'E':
         login()
         navigate_to_list()
-        python_selector = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div[3]/a[6]")))
+        python_selector = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div[4]/a[6]")))
         python_selector.send_keys(Keys.RETURN)
-        export_button = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/form/input")))
+        export_button = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/form/input")))
         export_button.click()
         WebDriverWait(browser, 5).until(EC.alert_is_present(), 'Timed out waiting for confirmation popup to appear.')
         alert_export_popup = browser.switch_to.alert
         alert_export_popup.accept()
-        export_link = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/div/a")))
+        export_link = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='dialog']/tbody/tr/td/div/a")))
         export_link.click()
         export_text = export_link.text
 
@@ -80,9 +77,10 @@ def main():
                 final_anime_list.append(anime['series_title'])
 
     # Write all anime titles to .txt file with specified genre
-    for anime in final_anime_list:
-        with open("C:/Users/AlexN/Desktop/AnimeList.txt", "w") as anime_list_file:
-            anime_list_file.write(anime)
+    with open("C:/Users/AlexN/Desktop/AnimeList.txt", "w", encoding="utf-8") as anime_list_file:
+        anime_list_file.write("------------- GENRE: " + user_genre.capitalize() + " -------------\n")
+        for anime in final_anime_list:
+            anime_list_file.write(anime + "\n")
 
     # If no animes in list -> file not created, so can't open file -> return message
     if len(final_anime_list) == 0:
@@ -110,9 +108,7 @@ def export_or_upload():
 
 
 def navigate_to_list():
-    python_selector = WebDriverWait(browser, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='header-menu']/div[2]/a/i")),
-        message="Unable to login. Check your login credentials again...")
+    python_selector = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='header-menu']/div[2]/a/i")), message="Unable to login. Check your login credentials again...")
     python_selector.click()
     python_selector = browser.find_element_by_xpath("//*[@id='header-menu']/div[2]/div/ul/li[1]/a")
     python_selector.click()
