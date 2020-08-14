@@ -36,7 +36,7 @@ def open_mal():
     table_bodies = table.find_elements_by_xpath(".//tbody[@class='list-item']")
     
     non_edited_table_bodies = WebDriverWait(browser, 10).until(EC.presence_of_all_elements_located((By.XPATH, ".//tbody[@class='list-item']/tr[1]/td[@class='data tags']/div[not(span)]")))
-    print("Non-span: " + str(len(non_edited_table_bodies)))
+    print("Animes to add genres to: " + str(len(non_edited_table_bodies)))
 
     num_bodies = len(table_bodies)
     non_edited_num_bodies = len(non_edited_table_bodies)
@@ -48,7 +48,7 @@ def open_mal():
 
         # If near bottom of page (item #300) -> scroll to load more data if not at end of list
         
-        anime_data = get_link_with_index(ANIME_LINK_PATH)
+        anime_data = get_link(ANIME_LINK_PATH)
         anime_data[1].send_keys(Keys.RETURN)
 
         browser_after = browser.window_handles[0]
@@ -70,7 +70,7 @@ def open_mal():
             scroll_to_bottom()
             time.sleep(1)
         # Click on tag link
-        td_link = get_link_with_index(ANIME_TAG_PATH)[1]
+        td_link = get_link(ANIME_TAG_PATH)[1]
         td_link.find_element_by_xpath(".//a[@class='edit']").send_keys(Keys.RETURN)
         textarea = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, ".//textarea")))
@@ -81,7 +81,7 @@ def open_mal():
     print("All genres updated in MAL for user: https://myanimelist.net/animelist/" + username)
 
 
-def get_link_with_index(link_xpath):
+def get_link(link_xpath):
     table = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='list-container']/div[4]/div/table")))
     table_body = WebDriverWait(table, 10).until(EC.presence_of_element_located((By.XPATH, ".//tbody[@class='list-item']/tr[1]/td[@class='data tags']/div[not(span)]")))
     

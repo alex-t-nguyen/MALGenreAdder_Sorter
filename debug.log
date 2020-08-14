@@ -306,3 +306,5 @@
 [0812/155652.876:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
 [0812/155652.876:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
 [0812/155652.876:ERROR:exception_snapshot_win.cc(98)] thread ID 13752 not found in process
+[0813/181822.911:ERROR:file_io.cc(89)] ReadExactly: expected 36, observed 0
+[0813/182617.492:ERROR:file_io.cc(89)] ReadExactly: expected 36, observed 0
