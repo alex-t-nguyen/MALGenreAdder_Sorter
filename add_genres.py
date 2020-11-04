@@ -11,7 +11,7 @@ SCROLL_PAUSE_TIME = 0.5
 ANIME_LINK_PATH = ".//td[@class='data title clearfix']//a"
 ANIME_TAG_PATH = ".//td[@class='data tags']"
 
-browser = webdriver.Chrome()
+browser = webdriver.Chrome(executable_path=r'C:\\Users\AlexN\Documents\\Python Projects\\MALGenreAdder\\chromedriver.exe')
 browser.get('https://myanimelist.net/login.php')
 
 
@@ -47,13 +47,17 @@ def open_mal():
     for i in range(0, non_edited_num_bodies, 1):
 
         # If near bottom of page (item #300) -> scroll to load more data if not at end of list
-        
+        scroll_to_bottom()
+        # Click on anime link to navigate to info page
         anime_data = get_link(ANIME_LINK_PATH)
         anime_data[1].send_keys(Keys.RETURN)
 
+        # Switch broswer since navigating to new page
         browser_after = browser.window_handles[0]
         browser.switch_to.window(browser_after)
-        inner_table_row = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='content']/table//tbody//tr")))
+
+        # Find anime info column (left side of page with list of genres)
+        inner_table_row = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//*[@id='content']/table//tbody//tr")), message='Couldn\'t find anime info column on info page.')
         details_column = inner_table_row.find_element_by_xpath(".//td[@class='borderClass']//div")
         genres = details_column.find_elements_by_xpath(".//span[@itemprop='genre']")
 
