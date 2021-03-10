@@ -18,5 +18,11 @@ Afterwards, a series of prompts will be given to navigate the user in adding gen
 ![Command prompt command to get genres](images/OutputAnimeList.PNG)
 
 ## Notes
-Chromedriver.exe file included to keep selenium updated with chrome (need to delete and download new chromedriver whenever chrome has update from [here](https://chromedriver.storage.googleapis.com/index.html)). To update chromedriver, download the chromedriver zip file, extract the chromedriver.exe file and save in MAL program folder (replace previous chromedriver.exe file if the old file is already there).
+- Chromedriver.exe file included to keep selenium updated with chrome (need to delete and download new chromedriver whenever chrome has update from [here](https://chromedriver.storage.googleapis.com/index.html)). To update chromedriver, download the chromedriver zip file, extract the chromedriver.exe file and save in MAL program folder (replace previous chromedriver.exe file if the old file is already there).
+
+- To run the file in the command line from any directory (i.e. the default directory): <br />
+    1. Copy the directory path of the chromedriver.exe file (not including the chromedriver.exe file itself)
+    2. Open Environment Variables and click on the **Path** variable under User variables
+    3. Paste the directory path in a new environment variable
+
 
